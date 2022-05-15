@@ -24,9 +24,12 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(
           value: Auth(),
+        ),
+        ChangeNotifierProxyProvider<Auth, Products>(
+          update: (ctx, auth, previousProducts) => Products(
+            auth.token,
+            previousProducts == null ? [] : previousProducts.items,
           ),
-        ChangeNotifierProvider.value(
-          value: Products(),
         ),
         ChangeNotifierProvider.value(
           value: Cart(),
@@ -35,11 +38,14 @@ class MyApp extends StatelessWidget {
           value: Orders(),
         ),
       ],
-      child: Consumer<Auth>(builder: (context, auth, _) => MaterialApp(
+      child: Consumer<Auth>(
+        builder: (context, auth, _) => MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'MyShop',
           theme: ThemeData(
-            fontFamily: 'Lato', colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple).copyWith(secondary: Colors.deepOrange),
+            fontFamily: 'Lato',
+            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
+                .copyWith(secondary: Colors.deepOrange),
           ),
           home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
           routes: {
@@ -51,7 +57,6 @@ class MyApp extends StatelessWidget {
           },
         ),
       ),
-      
     );
   }
 }
